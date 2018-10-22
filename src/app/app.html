@@ -1,19 +1,39 @@
 <ion-menu [content]="content">
   <ion-header>
     <ion-toolbar>
-      <ion-title>Menu</ion-title>
+      <ion-title>サロン</ion-title>
     </ion-toolbar>
   </ion-header>
 
   <ion-content>
     <ion-list>
-      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
-        {{p.title}}
-      </button>
+      <ion-item *ngFor="let room of rooms">
+        <span>{{room.key}}</span>
+        <button menuClose (click)="joinRoom(room)">
+          {{room.name}}
+        </button>
+
+      </ion-item>
     </ion-list>
   </ion-content>
-
 </ion-menu>
 
-<!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->
 <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
+
+<ion-menu [content]="content" side="right">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>メンバー</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list>
+      <ion-item *ngFor="let member of members">
+        <span>{{member.key}}</span>
+        <button (click)="letMember(member)">
+          {{member.displayName}}
+        </button>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
