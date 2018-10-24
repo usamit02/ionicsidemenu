@@ -1,39 +1,38 @@
-<ion-menu [content]="content">
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>サロン</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-split-pane>
+  <ion-menu [content]="content">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>サロン</ion-title>
+      </ion-toolbar>
+    </ion-header>
 
-  <ion-content>
-    <ion-list>
-      <ion-item *ngFor="let room of rooms">
-        <span>{{room.key}}</span>
-        <button menuClose (click)="joinRoom(room)">
-          {{room.name}}
-        </button>
+    <ion-content>
+      <ion-list>
+        <ion-item *ngFor="let room of rooms">
+          <span>{{room.key}}</span>
+          <button menuClose (click)="joinRoom(room)">
+            {{room.name}}
+          </button>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+  <ion-menu [content]="content" side="right">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>メンバー</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <ion-item *ngFor="let member of members">
+          <button (click)="letMember(member)">
+            {{member}}
+          </button>
+        </ion-item>
+      </ion-list>
 
-      </ion-item>
-    </ion-list>
-  </ion-content>
-</ion-menu>
-
-<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
-
-<ion-menu [content]="content" side="right">
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>メンバー</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-content>
-    <ion-list>
-      <ion-item *ngFor="let member of members">
-        <span>{{member.key}}</span>
-        <button (click)="letMember(member)">
-          {{member.displayName}}
-        </button>
-      </ion-item>
-    </ion-list>
-  </ion-content>
-</ion-menu>
+    </ion-content>
+  </ion-menu>
+  <ion-nav [root]="rootPage" main #content></ion-nav>
+</ion-split-pane>

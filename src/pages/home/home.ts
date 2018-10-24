@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import * as firebase from 'firebase';
-import { Observable } from 'rxjs/Observable';
+//import { Observable } from 'rxjs/Observable';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { SessionProvider } from '../../providers/session/session';
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -10,24 +11,22 @@ import { AngularFireAuth } from 'angularfire2/auth';
 export class HomePage {
   room;
   user: any = false;
-  auth: Observable<firebase.User>;
+  //auth: Observable<firebase.User>;
   message: string;
   chats = [];
   users = [];
-  constructor(public navCtrl: NavController, public navParams: NavParams, public afAuth: AngularFireAuth) {
-    this.room = 'room' in this.navParams.data ? this.navParams.data.room : { key: "1" };
+  constructor(public navCtrl: NavController, public navParams: NavParams, public afAuth: AngularFireAuth, private session: SessionProvider) {
+    this.room = 'room' in this.navParams.data ? this.navParams.data.room : { key: "1", name: "メインラウンジ" };
   }
   ngOnInit() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.user = user;
-        const ref = firebase.database().ref('member/' + this.room.key + '/' + user.uid);
-        ref.set({
-          displayName: this.user.displayName,
-          date: Date()
-        });
+        this.session.login(this.user);
+        console.log("home.ts login");
       } else {
         this.user = false;
+        this.session.logout();
       }
     });
     if (this.room) {

@@ -12,6 +12,7 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
+import { SessionProvider } from '../providers/session/session';
 export const firebaseConfig = {
   apiKey: 'AIzaSyAvD0ftnENGOCvE9cOPB8AklV7JeMY4cfg',
   authDomain: 'blogersguild1.firebaseapp.com',
@@ -45,7 +46,8 @@ const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
   providers: [
     StatusBar,
     SplashScreen,
-    { provide: ErrorHandler, useClass: IonicErrorHandler }
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    SessionProvider
   ]
 })
 export class AppModule { }

@@ -4,7 +4,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>ブロガーズギルド</ion-title>
+    <ion-title>{{room.name}}</ion-title>
     <ion-buttons end>
       <div style="display:flex;">
         <button ion-button block icon-only (click)="logout()">
@@ -17,7 +17,6 @@
     </ion-buttons>
   </ion-navbar>
 </ion-header>
-
 
 <ion-content padding>
   <ion-list class="chat-list">
