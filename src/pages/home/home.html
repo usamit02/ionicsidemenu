@@ -4,17 +4,20 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>{{room.name}}</ion-title>
+    <ion-item>
+      <ion-title>{{room.name}}</ion-title>
+      <ion-icon name="headset" (click)="rtc('headset')" item-right></ion-icon>
+      <ion-icon *ngIf="user" name="mic" (click)="rtc('mic')" item-right></ion-icon>
+      <ion-icon *ngIf="user" name="videocam" (click)="rtc('videocam')" item-right></ion-icon>
+      <ion-icon name="dummy" item-right></ion-icon>
+      <ion-icon name="exit" (click)="logout()" item-right></ion-icon>
+    </ion-item>
     <ion-buttons end>
-      <div style="display:flex;">
-        <button ion-button block icon-only (click)="logout()">
-          <ion-icon name="exit"></ion-icon>
-        </button>
-        <button ion-button block menuToggle="right">
-          <ion-icon name="menu"></ion-icon>
-        </button>
-      </div>
+      <button ion-button block menuToggle="right">
+        <ion-icon name="menu"></ion-icon>
+      </button>
     </ion-buttons>
+
   </ion-navbar>
 </ion-header>
 

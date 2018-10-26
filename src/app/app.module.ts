@@ -4,7 +4,7 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
+import { VideoPage } from '../pages/video/video';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -21,13 +21,13 @@ export const firebaseConfig = {
   storageBucket: 'blogersguild1.appspot.com',
   messagingSenderId: '1091781872346'
 };
-const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
-
+const config: SocketIoConfig = { url: 'http://localhost:3002', options: {} };
+//const config: SocketIoConfig = { url: 'https://www.clife.cf:3002', options: {} };
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    ListPage
+    VideoPage
   ],
   imports: [
     BrowserModule,
@@ -41,7 +41,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
   entryComponents: [
     MyApp,
     HomePage,
-    ListPage
+    VideoPage
   ],
   providers: [
     StatusBar,

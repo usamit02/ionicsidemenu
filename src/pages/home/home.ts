@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import * as firebase from 'firebase';
-//import { Observable } from 'rxjs/Observable';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { SessionProvider } from '../../providers/session/session';
 @Component({
@@ -11,7 +10,6 @@ import { SessionProvider } from '../../providers/session/session';
 export class HomePage {
   room;
   user: any = false;
-  //auth: Observable<firebase.User>;
   message: string;
   chats = [];
   users = [];
@@ -23,7 +21,6 @@ export class HomePage {
       if (user) {
         this.user = user;
         this.session.login(this.user);
-        console.log("home.ts login");
       } else {
         this.user = false;
         this.session.logout();
@@ -42,12 +39,6 @@ export class HomePage {
       });
     }
   }
-  ionViewWillUnload() {
-    if (this.user) {
-      const ref = firebase.database().ref('member/' + this.room.key + '/' + this.user.uid);
-      ref.remove();
-    }
-  }
   sendMessage() {
     const newData = firebase.database().ref('chat/' + this.room.key).push();
     newData.set({
@@ -64,5 +55,8 @@ export class HomePage {
   }
   logout() {
     this.afAuth.auth.signOut();
+  }
+  rtc(action) {
+    this.session.rtc(action);
   }
 }

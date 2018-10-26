@@ -20,15 +20,19 @@
   <ion-menu [content]="content" side="right">
     <ion-header>
       <ion-toolbar>
-        <ion-title>メンバー</ion-title>
+        <ion-item>
+          <ion-title>メンバー</ion-title>
+        </ion-item>
       </ion-toolbar>
     </ion-header>
     <ion-content>
       <ion-list>
         <ion-item *ngFor="let member of members">
+          <img class="avator" src="{{member.avatorUrl}}">
           <button (click)="letMember(member)">
-            {{member}}
+            {{member.name}}
           </button>
+          <ion-icon name="{{member.rtc}}" item-right></ion-icon>
         </ion-item>
       </ion-list>
 

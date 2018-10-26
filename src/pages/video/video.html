@@ -1,0 +1,14 @@
+<ion-header>
+  <ion-navbar>
+    <ion-item>
+      <ion-title>{{mediaRoom.name}} メディア</ion-title>
+      <ion-icon name="exit" (click)="stop()" item-right></ion-icon>
+    </ion-item>
+  </ion-navbar>
+</ion-header>
+<ion-content padding>
+  <div id='videos'>
+    <video id="myVideo" autoplay muted="true"></video>
+    <video id="yourVideo" autoplay></video>
+  </div>
+</ion-content>
