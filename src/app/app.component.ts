@@ -9,6 +9,7 @@ import { firebaseConfig } from './app.module';
 import { NgOnChangesFeature } from '@angular/core/src/render3';
 import { Socket } from 'ng-socket-io';
 import { Session, SessionProvider } from '../providers/session/session';
+import { MysqlProvider } from '../providers/mysql/mysql';
 @Component({
   templateUrl: 'app.html'
 })
@@ -17,14 +18,15 @@ export class MyApp {
   rootPage: any = HomePage;
   rooms = [];
   members = [];
-  room = { key: "1", name: "メインラウンジ" };
+  room = { id: "1", name: "メインラウンジ" };
   user;
   constructor(
     public platform: Platform,
     public statusBar: StatusBar,
     public splashScreen: SplashScreen,
     private socket: Socket,
-    public session: SessionProvider
+    public session: SessionProvider,
+    public mysql: MysqlProvider
   ) {
     this.platform.ready().then(() => { // Okay, so the platform is ready and our plugins are available.Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
@@ -42,22 +44,15 @@ export class MyApp {
         if (session.user) {
           this.user = session.user;
           let u = { id: this.user.uid, name: this.user.displayName, avatorUrl: this.user.photoURL }
-          this.socket.emit('join', { newRoomId: this.room.key, user: u, rtc: session.rtc });
+          this.socket.emit('join', { newRoomId: this.room.id, user: u, rtc: session.rtc });
         } else {
           this.user = false;
-          this.socket.emit('logout', { roomId: this.room.key });
+          this.socket.emit('logout', { roomId: this.room.id });
         }
       }
     })
-    firebase.database().ref('room').on('value', resp => {
-      if (resp) {
-        this.rooms = [];
-        resp.forEach(childSnapshot => {
-          const room = childSnapshot.val();
-          room.key = childSnapshot.key;
-          this.rooms.push(room);
-        });
-      }
+    this.mysql.room(0).subscribe((data: any) => {
+      this.rooms = data;
     });
     this.socket.on("join", users => {
       this.members = [];
@@ -68,7 +63,7 @@ export class MyApp {
   }
   joinRoom(room) { // Reset the content nav to have just this page. we wouldn't want the back button to show in this scenario
     this.nav.setRoot(HomePage, { room: room });
-    this.socket.emit('leave', { oldRoomId: this.room.key });
+    this.socket.emit('leave', { oldRoomId: this.room.id });
     this.room = room;
   }
   letMember(member) {

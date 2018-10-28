@@ -2,7 +2,9 @@
   <ion-navbar>
     <ion-item>
       <ion-title>{{mediaRoom.name}} メディア</ion-title>
-      <ion-icon name="exit" (click)="stop()" item-right></ion-icon>
+      <button ion-button icon-only item-right (click)="stop()">
+        <ion-icon name="exit" item-right></ion-icon>
+      </button>
     </ion-item>
   </ion-navbar>
 </ion-header>

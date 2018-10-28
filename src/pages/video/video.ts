@@ -19,7 +19,7 @@ export class VideoPage {
   }
   ionViewDidLoad() {
     if (this.navParams.data.rtc !== 'headset') {
-      let media = this.navParams.data.rtc == 'videocam' ?
+      let media = this.navParams.data.rtc == 'mic' ?
         { video: { width: { min: 320, max: 480 }, height: { min: 240, max: 320 } }, audio: true } :
         { audio: true, video: false };
       navigator.mediaDevices.getUserMedia(media).then(stream => {

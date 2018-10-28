@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import { HttpClientModule } from '@angular/common/http';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -13,6 +14,7 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
 import { SessionProvider } from '../providers/session/session';
+import { MysqlProvider } from '../providers/mysql/mysql';
 export const firebaseConfig = {
   apiKey: 'AIzaSyAvD0ftnENGOCvE9cOPB8AklV7JeMY4cfg',
   authDomain: 'blogersguild1.firebaseapp.com',
@@ -21,8 +23,8 @@ export const firebaseConfig = {
   storageBucket: 'blogersguild1.appspot.com',
   messagingSenderId: '1091781872346'
 };
-const config: SocketIoConfig = { url: 'http://localhost:3002', options: {} };
-//const config: SocketIoConfig = { url: 'https://www.clife.cf:3002', options: {} };
+//const config: SocketIoConfig = { url: 'http://localhost:3002', options: {} };
+const config: SocketIoConfig = { url: 'https://www.clife.cf:3002', options: {} };
 @NgModule({
   declarations: [
     MyApp,
@@ -32,6 +34,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3002', options: {} };
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
+    HttpClientModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireAuthModule,
@@ -47,7 +50,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3002', options: {} };
     StatusBar,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    SessionProvider
+    SessionProvider,
+    MysqlProvider
   ]
 })
 export class AppModule { }

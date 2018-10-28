@@ -6,11 +6,17 @@
     </button>
     <ion-item>
       <ion-title>{{room.name}}</ion-title>
-      <ion-icon name="headset" (click)="rtc('headset')" item-right></ion-icon>
-      <ion-icon *ngIf="user" name="mic" (click)="rtc('mic')" item-right></ion-icon>
-      <ion-icon *ngIf="user" name="videocam" (click)="rtc('videocam')" item-right></ion-icon>
+      <button ion-button icon-only item-right (click)="rtc('headset')">
+        <ion-icon name="headset"></ion-icon>
+      </button>
+      <button *ngIf="user" ion-button icon-only item-right (click)="rtc('mic')">
+        <ion-icon name="mic"></ion-icon>
+      </button>
+      <!--   <ion-icon *ngIf="user" name="videocam" (click)="rtc('videocam')" item-right></ion-icon> -->
       <ion-icon name="dummy" item-right></ion-icon>
-      <ion-icon name="exit" (click)="logout()" item-right></ion-icon>
+      <button ion-button icon-only item-right (click)="logout()">
+        <ion-icon name="exit"></ion-icon>
+      </button>
     </ion-item>
     <ion-buttons end>
       <button ion-button block menuToggle="right">
@@ -45,14 +51,19 @@
             <ion-icon name="logo-twitter">twitter</ion-icon>
           </button>
           <button ion-button round (click)="loginFacebook()">
-            <ion-icon name="logo-facebook">facebook</ion-icon>
+            <ion-icon name="logo-facebook">acebook</ion-icon>
+          </button>
+          <button ion-button round (click)="loginGoogle()">
+            <ion-icon name="logo-google">oogle</ion-icon>
           </button>
         </ion-buttons>
       </div>
       <div *ngSwitchDefault>
         <ion-item>
-          <ion-input type="text" placeholder="お気軽に書き込んでね" [(ngModel)]="message" name="message"></ion-input>
-          <ion-icon name="send" (click)="sendMessage()" item-right></ion-icon>
+          <textarea #chat_input placeholder="気軽に書き込んで" [(ngModel)]="message" (keyup.enter)="sendMsg()"></textarea>
+          <button ion-button clear icon-only item-right (click)="sendMsg()">
+            <ion-icon name="ios-send" ios="ios-send" md="md-send"></ion-icon>
+          </button>
         </ion-item>
       </div>
     </div>
