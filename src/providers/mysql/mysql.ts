@@ -6,8 +6,8 @@ export class MysqlProvider {
 
   constructor(public http: HttpClient) {
   }
-  room(parent: number): Observable<Object> {
-    //let params = new HttpParams().append("parent", "${parent}");
-    return this.http.get("https://localhost/public_html/room.php", { params: { parent: `${parent}` } });
+  room(uid: string): Observable<Object> {
+    //return this.http.get("https://localhost/public_html/room.php", { params: { parent: `${parent}` } });
+    return this.http.get("https://localhost/public_html/room.php", { params: { uid: uid } });
   }
 }
