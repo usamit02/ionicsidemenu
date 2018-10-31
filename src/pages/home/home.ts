@@ -15,7 +15,7 @@ export class HomePage {
   chats = [];
   users = [];
   constructor(public navCtrl: NavController, public navParams: NavParams, public afAuth: AngularFireAuth, private session: SessionProvider) {
-    this.room = 'room' in this.navParams.data ? this.navParams.data.room : { id: "1", name: "メインラウンジ" };
+    this.room = 'room' in this.navParams.data ? this.navParams.data.room : { id: "1", na: "メインラウンジ" };
   }
   ngOnInit() {
     firebase.auth().onAuthStateChanged((user) => {

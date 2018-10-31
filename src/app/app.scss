@@ -14,34 +14,26 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
-.avator{max-width:30px;max-height: 30px}
-nav ul {
-  display: none;
+.folder{
+   font-weight:bold;
 }
-nav .f1{
-  display:block;
-   }
-nav .ex{
-  margin-right: 20px;
-  color:green ;
+/*
+.md {
+  ion-menu[side=left] {
+    max-width: 250px!important;
+  }
+  ion-menu[side=right] {
+    max-width: 150px!important;
+  }
+} 
+*/
+.split-pane-visible >.split-pane-side {
+  flex-grow: 10;
 }
-
-nav li {
-  list-style: none;
-  margin-left: -20px;
-  padding-top:10px;
-  padding-bottom:10px;
-  padding-left:10px;
-  padding-right:10px;
-  text-align:center;
-  border:2px solid;
-  border-color:skyblue mediumblue darkblue skyblue;
-  background:lightsteelblue;
-  
+.split-pane-visible >.split-pane-main {
+  flex-grow: 90;
 }
-nav .fl1{
-  background:lightgreen;flex:1 1 50px;
-}
-nav .fl3{
-  background:lightyellow;
+.split-pane-visible >.split-pane-side {
+  min-width: 200px; /* Default: 270px */
+  max-width: 304px; /* Same as when menu opens in mobile mode */
 }

@@ -1,20 +1,21 @@
-<ion-split-pane>
+<ion-split-pane when="lg">
   <ion-menu [content]="content">
     <ion-header>
       <ion-toolbar>
-        <ion-title>サロン</ion-title>
+        <ion-item>
+          <ion-title>{{folder.na}}</ion-title>
+          <button *ngIf="folder.id != '0'" ion-button icon-only item-right (click)="retRoom()">
+            <ion-icon name="exit"></ion-icon>
+          </button>
+        </ion-item>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
-      <ion-list id="nav">
-        <!-- <ion-list>
-        <ion-item *ngFor="let room of rooms">
-          <button menuClose (click)="joinRoom(room)">
-            {{room.na}} {{room.allow}}
-          </button>
-        </ion-item>
-      </ion-list>  -->
+      <ion-list>
+        <button ion-item *ngFor="let room of rooms" menuClose (click)="joinRoom(room)">
+          <span [class.folder]="room.folder=='1'">{{room.na}} {{room.allow}} </span>
+        </button>
       </ion-list>
     </ion-content>
   </ion-menu>
@@ -22,21 +23,23 @@
     <ion-header>
       <ion-toolbar>
         <ion-item>
-          <ion-title>メンバー</ion-title>
+          <input placeholder="メンバー検索" [(ngModel)]="userX" (keyup.enter)="searchMember()">
+          <button ion-button clear icon-only item-right (click)="searchMember()">
+            <ion-icon name="search"></ion-icon>
+          </button>
         </ion-item>
       </ion-toolbar>
     </ion-header>
     <ion-content>
       <ion-list>
-        <ion-item *ngFor="let member of members">
-          <img class="avator" src="{{member.avatorUrl}}">
-          <button (click)="letMember(member)">
-            {{member.name}}
-          </button>
+        <button ion-item *ngFor="let member of members" (click)="letMember(member)">
+          <ion-avatar item-left>
+            <img [src]="member.avatorUrl">
+          </ion-avatar>
+          <h2>{{member.name}}</h2>
           <ion-icon name="{{member.rtc}}" item-right></ion-icon>
-        </ion-item>
+        </button>
       </ion-list>
-
     </ion-content>
   </ion-menu>
   <ion-nav [root]="rootPage" main #content></ion-nav>

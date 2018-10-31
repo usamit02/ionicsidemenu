@@ -1,0 +1,24 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>{{folder.na}}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-sm-6 col-md-6 col-lg-6 col-xl-3 *ngFor="let room of rooms">
+        <ion-card (click)="joinRoom(room)">
+          <ion-card-header>
+            {{room.na}}
+          </ion-card-header>
+          <ion-card-content>
+            <p>{{room.discription}}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

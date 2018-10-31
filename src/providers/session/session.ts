@@ -18,20 +18,31 @@ export class SessionProvider {
   }
   rtc(action) {
     this.session.rtc = action;
+
+  }
+  joinRoom(room) {
+    this.session.room = room;
+    this.session.rtc = false;
     this.sessionSubject.next(this.session);
+  }
+  clearRoom(): void {
+    this.session.room = false;
   }
 }
 export class Session {
   login: boolean;
   user;
   rtc;
+  room;
   constructor() {
     this.login = false;
+    this.room = false;
   }
   reset(): Session {
     this.login = false;
     this.user = false;
     this.rtc = false;
+    this.room = false;
     return this;
   }
 }
