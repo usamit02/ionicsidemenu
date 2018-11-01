@@ -16,6 +16,7 @@
           </ion-card-header>
           <ion-card-content>
             <p>{{room.discription}}</p>
+            <p *ngIf="room.allow=='0' && room.price != '0'">月額{{room.price}}円</p>
           </ion-card-content>
         </ion-card>
       </ion-col>

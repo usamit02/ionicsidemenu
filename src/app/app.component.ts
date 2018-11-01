@@ -1,5 +1,5 @@
 import { Component, ViewChild, destroyPlatform } from '@angular/core';
-import { Nav, Platform } from 'ionic-angular';
+import { Nav, Platform, ActionSheetController, ToastController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import * as firebase from 'firebase';
@@ -7,6 +7,7 @@ import * as $ from 'jquery'
 import { HomePage } from '../pages/home/home';
 import { VideoPage } from '../pages/video/video';
 import { GridPage } from '../pages/grid/grid';
+import { PayPage } from '../pages/pay/pay';
 import { firebaseConfig } from './app.module';
 import { NgOnChangesFeature } from '@angular/core/src/render3';
 import { Socket } from 'ng-socket-io';
@@ -31,7 +32,9 @@ export class MyApp {
     public splashScreen: SplashScreen,
     private socket: Socket,
     public session: SessionProvider,
-    public mysql: MysqlProvider
+    public mysql: MysqlProvider,
+    public actionSheetCtrl: ActionSheetController,
+    private toastCtrl: ToastController
   ) {
     this.platform.ready().then(() => { // Okay, so the platform is ready and our plugins are available.Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
@@ -72,13 +75,50 @@ export class MyApp {
       this.folder = room;
       this.nav.setRoot(GridPage, { folder: room, rooms: this.rooms });
     } else {
-      this.nav.setRoot(HomePage, { room: room });
+      if (room.allow == "1") {
+        this.nav.setRoot(HomePage, { room: room });
+      } else {
+        if (this.user) {
+          let actionSheet = this.actionSheetCtrl.create({
+            title: 'サロンに加入しますか',
+            buttons: [
+              {
+                text: '月額課金手続き',
+                icon: "money",
+                role: 'destructive',
+                handler: () => {
+                  this.nav.setRoot(PayPage, { user: this.user, room: room });
+                }
+              },
+              {
+                text: '加入しない',
+                icon: "close",
+                role: 'cancel'
+              }
+            ]
+          });
+          actionSheet.present();
+        } else {
+          let toast = this.toastCtrl.create({
+            message: "ログインしてください",
+            duration: 3000,
+            position: 'top'
+          });
+          toast.present();
+        }
+      }
+      return false;
     }
     this.socket.emit('leave', { oldRoomId: this.room.id });
     this.room = room;
   }
   letMember(member) {
-    alert(member.name + "について表示する予定、ここからDM、ビデオ通話など");
+    let toast = this.toastCtrl.create({
+      message: member.name + "について表示する予定、ここからDM、ビデオ通話など",
+      duration: 3000,
+      position: 'top'
+    });
+    toast.present();
   }
   retRoom() {
     if (this.room.folder) {
@@ -91,6 +131,12 @@ export class MyApp {
     this.folder = folder[0];
   }
   searchMember() {
-    alert(this.userX + "は席を外しているようです。")
+    let toast = this.toastCtrl.create({
+      message: this.userX + "は席を外しているようです。",
+      duration: 3000,
+      position: 'bottom'
+    });
+    toast.present();
+    alert()
   }
 }

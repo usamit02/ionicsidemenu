@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>{{room.na}}への加入</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <h2>加入にあたって</h2>
+  <h2>注意事項</h2>
+  <h2>返金について</h2>
+  <h2>プライバシーポリシー</h2>
+  <form #form="ngForm" (ngSubmit)="pay(form.value)">
+    <ion-list>
+      <ion-list-header>クレジットカード情報</ion-list-header>
+      <ion-item>
+        <ion-label>カード番号</ion-label>
+        <ion-input [(ngModel)]="card.number" name="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>CVC</ion-label>
+        <ion-input [(ngModel)]="card.cvc" name="cvc"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>有効期間</ion-label>
+        <ion-select [(ngModel)]="card.exp_month" name="exp_month">
+          <ion-option *ngFor="let month of months">{{month}}</ion-option>
+        </ion-select>
+        <span>　／　</span>
+        <ion-select [(ngModel)]="card.exp_year" name="exp_year">
+          <ion-option *ngFor="let year of years">{{year}}</ion-option>
+        </ion-select>
+      </ion-item>
+      <button ion-button round type="submit">同意して支払う</button>
+    </ion-list>
+  </form>
+</ion-content>
