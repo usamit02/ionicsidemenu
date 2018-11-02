@@ -10,6 +10,7 @@
   <h2>注意事項</h2>
   <h2>返金について</h2>
   <h2>プライバシーポリシー</h2>
+  <h2>月額：{{room.price}}円（毎月１日払い）</h2>
   <form #form="ngForm" (ngSubmit)="pay(form.value)">
     <ion-list>
       <ion-list-header>クレジットカード情報</ion-list-header>
@@ -26,7 +27,6 @@
         <ion-select [(ngModel)]="card.exp_month" name="exp_month">
           <ion-option *ngFor="let month of months">{{month}}</ion-option>
         </ion-select>
-        <span>　／　</span>
         <ion-select [(ngModel)]="card.exp_year" name="exp_year">
           <ion-option *ngFor="let year of years">{{year}}</ion-option>
         </ion-select>

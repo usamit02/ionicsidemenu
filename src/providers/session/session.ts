@@ -16,6 +16,9 @@ export class SessionProvider {
   logout(): void {
     this.sessionSubject.next(this.session.reset());
   }
+  getUser() {
+    return this.session.user;
+  }
   rtc(action) {
     this.session.rtc = action;
 

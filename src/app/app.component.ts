@@ -57,6 +57,10 @@ export class MyApp {
           this.user = session.user;
           let u = { id: this.user.uid, name: this.user.displayName, avatorUrl: this.user.photoURL }
           this.socket.emit('join', { newRoomId: this.room.id, user: u, rtc: session.rtc });
+          this.mysql.room(this.user ? this.user.uid : "0").subscribe((data: any) => {
+            this.allRooms = data;
+            this.rooms = data.filter(r => { if (r.parent === this.folder.id) return true; });
+          });
         } else {
           this.user = false;
           this.socket.emit('logout', { roomId: this.room.id });
@@ -64,53 +68,61 @@ export class MyApp {
       }
     })
     this.socket.on("join", users => { this.members = users; });
-    this.mysql.room(this.user ? this.user.uid : "0").subscribe((data: any) => {
-      this.allRooms = data;
-      this.rooms = data.filter(r => { if (r.parent === "0") return true; });
-    });
+
   }
   joinRoom(room) { // Reset the content nav to have just this page. we wouldn't want the back button to show in this scenario
     if (room.folder) {
-      this.rooms = this.allRooms.filter(r => { if (r.parent === room.id) return true; });
-      this.folder = room;
-      this.nav.setRoot(GridPage, { folder: room, rooms: this.rooms });
+      if (room.allow == "1") {
+        this.rooms = this.allRooms.filter(r => { if (r.parent === room.id) return true; });
+        this.folder = room;
+        this.nav.setRoot(GridPage, { folder: room, rooms: this.rooms });
+        leaveRoom(this);
+      } else {
+        payRoom();
+      }
     } else {
       if (room.allow == "1") {
         this.nav.setRoot(HomePage, { room: room });
+        leaveRoom(this);
       } else {
-        if (this.user) {
-          let actionSheet = this.actionSheetCtrl.create({
-            title: 'サロンに加入しますか',
-            buttons: [
-              {
-                text: '月額課金手続き',
-                icon: "money",
-                role: 'destructive',
-                handler: () => {
-                  this.nav.setRoot(PayPage, { user: this.user, room: room });
-                }
-              },
-              {
-                text: '加入しない',
-                icon: "close",
-                role: 'cancel'
-              }
-            ]
-          });
-          actionSheet.present();
-        } else {
-          let toast = this.toastCtrl.create({
-            message: "ログインしてください",
-            duration: 3000,
-            position: 'top'
-          });
-          toast.present();
-        }
+        payRoom();
       }
-      return false;
     }
-    this.socket.emit('leave', { oldRoomId: this.room.id });
-    this.room = room;
+    function leaveRoom(that) {
+      that.socket.emit('leave', { oldRoomId: that.room.id });
+      that.room = room;
+    }
+    function payRoom() {
+      if (this.user) {
+        let actionSheet = this.actionSheetCtrl.create({
+          title: 'サロンに加入しますか',
+          buttons: [
+            {
+              text: '月額課金手続き',
+              icon: "money",
+              role: 'destructive',
+              handler: () => {
+                this.nav.setRoot(PayPage, { user: this.user, room: room });
+                leaveRoom(this);
+              }
+            },
+            {
+              text: '加入しない',
+              icon: "close",
+              role: 'cancel'
+            }
+          ]
+        });
+        actionSheet.present();
+      } else {
+        let toast = this.toastCtrl.create({
+          message: "ログインしてください",
+          duration: 3000,
+          position: 'top'
+        });
+        toast.present();
+      }
+    }
   }
   letMember(member) {
     let toast = this.toastCtrl.create({
