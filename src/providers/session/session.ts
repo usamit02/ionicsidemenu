@@ -21,7 +21,7 @@ export class SessionProvider {
   }
   rtc(action) {
     this.session.rtc = action;
-
+    this.sessionSubject.next(this.session);
   }
   joinRoom(room) {
     this.session.room = room;

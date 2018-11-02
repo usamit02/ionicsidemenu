@@ -2,12 +2,10 @@
   <ion-menu [content]="content">
     <ion-header>
       <ion-toolbar>
-        <ion-item>
+        <button ion-item (click)="retRoom()">
           <ion-title>{{folder.na}}</ion-title>
-          <button *ngIf="folder.id != '0'" ion-button icon-only item-right (click)="retRoom()">
-            <ion-icon name="exit"></ion-icon>
-          </button>
-        </ion-item>
+          <ion-icon *ngIf="folder.id != '0'" name="exit" item-right></ion-icon>
+        </button>
       </ion-toolbar>
     </ion-header>
 

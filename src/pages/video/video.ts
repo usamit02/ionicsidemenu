@@ -37,7 +37,7 @@ export class VideoPage {
     });
     this.peer.on('open', () => {
       let mode = this.navParams.data.rtc === 'headset' ? { mode: 'sfu' } : { mode: 'sfu', stream: this.localStream };
-      this.peerRoom = this.peer.joinRoom(this.mediaRoom.key, mode);
+      this.peerRoom = this.peer.joinRoom(this.mediaRoom.id, mode);
       this.peerRoom.on('stream', stream => {
         let myVideo = <HTMLVideoElement>document.getElementById('myVideo');
         if (!myVideo.srcObject) {
