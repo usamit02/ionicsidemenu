@@ -8,7 +8,7 @@ import { HomePage } from '../pages/home/home';
 import { VideoPage } from '../pages/video/video';
 import { GridPage } from '../pages/grid/grid';
 import { PayPage } from '../pages/pay/pay';
-
+import { StoryPage } from '../pages/story/story';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { AngularFireModule } from 'angularfire2';
@@ -33,7 +33,8 @@ const config: SocketIoConfig = { url: 'https://www.clife.cf:3002', options: {} }
     HomePage,
     VideoPage,
     GridPage,
-    PayPage
+    PayPage,
+    StoryPage
   ],
   imports: [
     BrowserModule,
@@ -50,7 +51,8 @@ const config: SocketIoConfig = { url: 'https://www.clife.cf:3002', options: {} }
     HomePage,
     VideoPage,
     GridPage,
-    PayPage
+    PayPage,
+    StoryPage
   ],
   providers: [
     StatusBar,

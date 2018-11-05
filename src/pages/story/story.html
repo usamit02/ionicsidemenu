@@ -1,0 +1,30 @@
+<ion-header>
+
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-item>
+      <ion-title>{{room.na}}</ion-title>
+      <button *ngIf="user" ion-button icon-only item-right (click)="logout()" item-right icon-left color="dark">
+        <ion-icon name="exit"></ion-icon>
+      </button>
+    </ion-item>
+    <ion-buttons end>
+      <button ion-button menuToggle="right">
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding>
+  <div id="main"></div>
+  <p></p>
+  <div text-center align-items-center>
+    <button ion-button *ngIf="room.allow=='0'" round large (click)="pay()">
+      このサロンに加入する
+    </button>
+  </div>
+</ion-content>

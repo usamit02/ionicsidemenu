@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { SessionProvider } from '../../providers/session/session';
+import { MysqlProvider } from '../../providers/mysql/mysql';
 @IonicPage()
 @Component({
   selector: 'page-grid',
@@ -9,13 +10,15 @@ import { SessionProvider } from '../../providers/session/session';
 export class GridPage {
   folder;
   rooms;
-  constructor(public navCtrl: NavController, public navParams: NavParams, private session: SessionProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private session: SessionProvider, public mysql: MysqlProvider, ) {
     this.folder = this.navParams.data.folder;
     this.rooms = this.navParams.data.rooms;
   }
 
   ionViewDidLoad() {
-
+    this.mysql.story(this.folder.id).subscribe((data: any) => {
+      document.getElementById("main").innerHTML = data;
+    });
   }
   joinRoom(room) {
     this.session.joinRoom(room);

@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, Content } from 'ionic-angular';
+import { NavController, NavParams, Content, ActionSheetController } from 'ionic-angular';
 import * as firebase from 'firebase';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { SessionProvider } from '../../providers/session/session';
@@ -14,7 +14,12 @@ export class HomePage {
   message: string;
   chats = [];
   users = [];
-  constructor(public navCtrl: NavController, public navParams: NavParams, public afAuth: AngularFireAuth, private session: SessionProvider) {
+  constructor(public navCtrl: NavController,
+    public navParams: NavParams,
+    public afAuth: AngularFireAuth,
+    private session: SessionProvider,
+    public actionSheetCtrl: ActionSheetController
+  ) {
     this.room = 'room' in this.navParams.data ? this.navParams.data.room : { id: "1", na: "メインラウンジ" };
   }
   ngOnInit() {
@@ -40,13 +45,17 @@ export class HomePage {
       });
     }
   }
+  typing() {
+
+  }
   sendMsg() {
     if (!this.message.trim()) return;
     const newData = firebase.database().ref('chat/' + this.room.id).push();
     newData.set({
       user: this.user.displayName,
       message: this.message,
-      sendDate: Date()
+      sendDate: Date(),
+      avatar: this.user.photoURL
     });
     this.message = "";
     setTimeout(() => {
@@ -55,14 +64,39 @@ export class HomePage {
       }
     }, 400)
   }
-  loginTwitter() {
-    this.afAuth.auth.signInWithPopup(new firebase.auth.TwitterAuthProvider());
-  }
-  loginFacebook() {
-    this.afAuth.auth.signInWithPopup(new firebase.auth.FacebookAuthProvider());
-  }
-  loginGoogle() {
-    this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  login() {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'ログイン',
+      buttons: [
+        {
+          text: 'twitter',
+          icon: "logo-twitter",
+          role: 'destructive',
+          handler: () => {
+            this.afAuth.auth.signInWithPopup(new firebase.auth.TwitterAuthProvider());
+          }
+        }, {
+          text: 'facebook',
+          icon: "logo-facebook",
+          role: 'destructive',
+          handler: () => {
+            this.afAuth.auth.signInWithPopup(new firebase.auth.FacebookAuthProvider());
+          }
+        }, {
+          text: 'google',
+          icon: "logo-google",
+          role: 'destructive',
+          handler: () => {
+            this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+          }
+        },
+        {
+          icon: "close",
+          role: 'cancel'
+        }
+      ]
+    });
+    actionSheet.present();
   }
   logout() {
     this.afAuth.auth.signOut();
