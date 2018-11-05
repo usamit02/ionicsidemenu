@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, Content, ActionSheetController } from 'ionic-angular';
 import * as firebase from 'firebase';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { SessionProvider } from '../../providers/session/session';
+import { Session, SessionProvider } from '../../providers/session/session';
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -14,6 +14,8 @@ export class HomePage {
   message: string;
   chats = [];
   users = [];
+  typing: boolean = true;
+  writer: string = "";
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public afAuth: AngularFireAuth,
@@ -23,6 +25,15 @@ export class HomePage {
     this.room = 'room' in this.navParams.data ? this.navParams.data.room : { id: "1", na: "メインラウンジ" };
   }
   ngOnInit() {
+    this.session.sessionState.subscribe((session: Session) => {
+      if (session.typing) {
+        console.log("ok" + session.typing);
+        this.writer = session.typing + "が入力中";
+        setTimeout(() => {
+          this.writer = "";
+        }, 3000);
+      }
+    });
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.user = user;
@@ -45,8 +56,14 @@ export class HomePage {
       });
     }
   }
-  typing() {
-
+  keyPress() {
+    if (this.typing) {
+      this.session.keyPress();
+      this.typing = false;
+    }
+    setTimeout(() => {
+      this.typing = true;
+    }, 2000);
   }
   sendMsg() {
     if (!this.message.trim()) return;

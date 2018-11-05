@@ -31,15 +31,33 @@ export class SessionProvider {
   clearRoom(): void {
     this.session.room = false;
   }
+  keyPress(): void {
+    this.session.keyPress = true;
+    this.sessionSubject.next(this.session);
+  }
+  clearKey(): void {
+    this.session.keyPress = false;
+  }
+  typing(name): void {
+    this.session.typing = name;
+    this.sessionSubject.next(this.session);
+  }
+  clearTyping(): void {
+    this.session.typing = "";
+  }
 }
 export class Session {
   login: boolean;
+  typing: string;
+  keyPress: boolean;
   user;
   rtc;
   room;
   constructor() {
     this.login = false;
     this.room = false;
+    this.typing = "";
+    this.keyPress = false;
   }
   reset(): Session {
     this.login = false;

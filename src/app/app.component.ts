@@ -8,7 +8,6 @@ import { VideoPage } from '../pages/video/video';
 import { GridPage } from '../pages/grid/grid';
 import { StoryPage } from '../pages/story/story';
 import { firebaseConfig } from './app.module';
-import { NgOnChangesFeature } from '@angular/core/src/render3';
 import { Socket } from 'ng-socket-io';
 import { Session, SessionProvider } from '../providers/session/session';
 import { MysqlProvider } from '../providers/mysql/mysql';
@@ -52,30 +51,38 @@ export class MyApp {
       } else if (session.room) {
         this.joinRoom(session.room);
         this.session.clearRoom();
-      } else if (session.typing) {
+      } else if (session.keyPress) {
         this.socket.emit('typing', this.user.displayName);
-        this.session.clearTyping();
+        this.session.clearKey();
       } else {
-        if (session.user) {
-          this.user = session.user;
-          let u = { id: this.user.uid, name: this.user.displayName, avatorUrl: this.user.photoURL }
-          this.socket.emit('join', { newRoomId: this.room.id, user: u, rtc: session.rtc });
-        } else {
-          this.user = false;
-          this.bookmk = false;
-          this.socket.emit('logout', { roomId: this.room.id });
-        }
-        this.mysql.room(this.user ? this.user.uid : "0").subscribe((data: any) => {
-          this.allRooms = data;
-          if (this.bookmk) {
-            this.rooms = data.filter(r => { if (r.bookmark === "1") return true; });
+        if (session.user != this.user) {
+          if (session.user) {
+            this.user = session.user;
+            let u = { id: this.user.uid, name: this.user.displayName, avatorUrl: this.user.photoURL }
+            this.socket.emit('join', { newRoomId: this.room.id, user: u, rtc: session.rtc });
           } else {
-            this.rooms = data.filter(r => { if (r.parent === this.folder.id) return true; });
+            this.user = false;
+            this.bookmk = false;
+            this.socket.emit('logout', { roomId: this.room.id });
           }
-        });
+          this.readRooms();
+        }
       }
     })
     this.socket.on("join", users => { this.members = users; });
+    this.socket.on("typing", name => {
+      this.session.typing(name);
+    });
+  }
+  readRooms() {
+    this.mysql.room(this.user ? this.user.uid : "0").subscribe((data: any) => {
+      this.allRooms = data;
+      if (this.bookmk) {
+        this.rooms = data.filter(r => { if (r.bookmark === "1") return true; });
+      } else {
+        this.rooms = data.filter(r => { if (r.parent === this.folder.id) return true; });
+      }
+    });
   }
   joinRoom(room) {
     if (room.allow === "1") {
@@ -98,7 +105,7 @@ export class MyApp {
     if (this.folder.id === "0") {
       if (this.user) {
         this.bookmk = !this.bookmk;
-        this.session.login(this.user);
+        this.readRooms();
       }
     } else {
       let folder = this.allRooms.filter(r => { if (r.id === this.folder.parent) return true; });
