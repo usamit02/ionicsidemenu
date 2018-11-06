@@ -4,8 +4,8 @@ import { Observable } from 'rxjs/Observable';
 import { ColdObservable } from 'rxjs/testing/ColdObservable';
 @Injectable()
 export class MysqlProvider {
-  //url: string = "bloggersguild.cf";
-  url: string = "localhost/public_html";
+  url: string = "bloggersguild.cf";
+  //url: string = "localhost/public_html";
   constructor(public http: HttpClient) {
   }
   room(uid: string): Observable<Object> {

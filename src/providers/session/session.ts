@@ -22,6 +22,21 @@ export class SessionProvider {
   rtc(action) {
     this.session.rtc = action;
     this.sessionSubject.next(this.session);
+    this.session.rtcPlay = action;
+  }
+  clearRtc(): void {
+    this.session.rtc = false;
+  }
+  getRtc() {
+    return this.session.rtcPlay;
+  }
+  rtcStop(): void {
+    this.session.rtcStop = true;
+    this.sessionSubject.next(this.session);
+    this.session.rtcPlay = false;
+  }
+  clearRtcStop(): void {
+    this.session.rtcStop = false;
   }
   joinRoom(room) {
     this.session.room = room;
@@ -45,6 +60,20 @@ export class SessionProvider {
   clearTyping(): void {
     this.session.typing = "";
   }
+  sendMsg(msg): void {
+    this.session.msg = msg;
+    this.sessionSubject.next(this.session);
+  }
+  clearMsg(): void {
+    this.session.msg = false;
+  }
+  chat(chat): void {
+    this.session.chat = chat;
+    this.sessionSubject.next(this.session);
+  }
+  clearChat(): void {
+    this.session.chat = false;
+  }
 }
 export class Session {
   login: boolean;
@@ -52,18 +81,32 @@ export class Session {
   keyPress: boolean;
   user;
   rtc;
+  rtcPlay;
+  rtcStop;
   room;
+  msg;
+  chat;
   constructor() {
     this.login = false;
     this.room = false;
+    this.rtc = false;
+    this.rtcPlay = false;
+    this.rtcStop = false;
     this.typing = "";
     this.keyPress = false;
+    this.chat = false;
+    this.msg = false;
   }
   reset(): Session {
     this.login = false;
     this.user = false;
     this.rtc = false;
+    this.rtcStop = false;
     this.room = false;
+    this.typing = "";
+    this.keyPress = false;
+    this.msg = false;
+    this.chat = false;
     return this;
   }
 }

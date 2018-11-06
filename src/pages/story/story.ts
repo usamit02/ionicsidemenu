@@ -41,7 +41,6 @@ export class StoryPage {
     this.mysql.story(this.room.id).subscribe((data: any) => {
       document.getElementById("main").innerHTML = data;
     });
-
   }
   pay() {
     if (this.user) {

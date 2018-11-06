@@ -1,16 +1,50 @@
 <ion-header>
+  <!--
   <ion-navbar>
     <ion-item>
-      <ion-title>{{mediaRoom.name}} メディア</ion-title>
+      <ion-title>{{mediaRoom.na}} メディア</ion-title>
       <button ion-button icon-only item-right (click)="stop()">
         <ion-icon name="exit" item-right></ion-icon>
       </button>
     </ion-item>
   </ion-navbar>
+-->
+  <video id="myVideo" autoplay muted="true"></video>
+  <video id="yourVideo" autoplay></video>
 </ion-header>
-<ion-content padding>
-  <div id='videos'>
-    <video id="myVideo" autoplay muted="true"></video>
-    <video id="yourVideo" autoplay></video>
-  </div>
+<ion-content>
+  <!--  <div ion-fixed class="videos">    
+  </div> -->
+  <ion-list class="chat-list">
+    <ion-item *ngFor="let chat of chats">
+      <ion-avatar item-left>
+        <img [src]="chat.avatar">
+      </ion-avatar>
+      <span class="msg-name">{{chat.user}}</span>
+      <p text-wrap>{{chat.message}}</p>
+    </ion-item>
+  </ion-list>
 </ion-content>
+<ion-footer>
+  <ion-toolbar no-padding>
+    <div [ngSwitch]="user">
+      <div *ngSwitchCase="false">
+        <button ion-item (click)="login()">
+          ログインしてガヤしよう
+          <ion-icon name="logo-twitter"></ion-icon>
+          <ion-icon name="logo-facebook"></ion-icon>
+          <ion-icon name="logo-google"></ion-icon>
+        </button>
+      </div>
+      <div *ngSwitchDefault>
+        <ion-item no-padding>
+          <textarea placeholder="ガヤガヤしよう" [(ngModel)]="message" (keyup)="keyPress()" (keyup.enter)="sendMsg()"></textarea>
+          <button ion-button clear icon-only item-right (click)="sendMsg()">
+            <ion-icon name="ios-send" ios="ios-send" md="md-send"></ion-icon>
+          </button>
+        </ion-item>
+        <p id="writer">{{writer}}</p>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-footer>

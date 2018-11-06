@@ -1,21 +1,64 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { PercentPipe } from '@angular/common';
-import { HomePage } from '../home/home';
+import { Component, ViewChild } from '@angular/core';
+import { IonicPage, NavController, NavParams, Content, ActionSheetController } from 'ionic-angular';
+import * as firebase from 'firebase';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { Session, SessionProvider } from '../../providers/session/session';
 @IonicPage()
 @Component({
   selector: 'page-video',
   templateUrl: 'video.html',
 })
 export class VideoPage {
+  @ViewChild(Content) content: Content;
   peer;
   peerRoom;
   mediaRoom;
   localStream: MediaStream;
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  user;
+  message: string;
+  chats = [];
+  typing: boolean = true;
+  writer: string = "";
+  constructor(public navCtrl: NavController,
+    public navParams: NavParams,
+    private session: SessionProvider,
+    public afAuth: AngularFireAuth,
+    public actionSheetCtrl: ActionSheetController
+  ) {
     this.mediaRoom = this.navParams.data.room;
+    this.user = this.navParams.data.user;
   }
   ngOnInit() {
+    this.session.sessionState.subscribe((session: Session) => {
+      if (session.rtcStop) {
+        if (this.peerRoom) {
+          this.peerRoom.close();
+          //this.navCtrl.setRoot(HomePage, { room: this.mediaRoom });
+        }
+        this.session.clearRtcStop();
+      } else if (session.chat) {
+        this.chats.push(session.chat);
+        setTimeout(() => {
+          if (this.content.scrollToBottom) {
+            this.content.scrollToBottom();
+          }
+        }, 400)
+      } else if (session.typing) {
+        this.writer = session.typing + "が入力中";
+        setTimeout(() => {
+          this.writer = "";
+        }, 3000);
+      }
+    });
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.user = user;
+        this.session.login(this.user);
+      } else {
+        this.user = false;
+        this.session.logout();
+      }
+    });
   }
   ionViewDidLoad() {
     if (this.navParams.data.rtc !== 'headset') {
@@ -26,6 +69,11 @@ export class VideoPage {
         let video = <HTMLVideoElement>document.getElementById('myVideo');
         video.srcObject = stream;
         this.localStream = stream;
+        video.onloadedmetadata = (e) => {
+          setTimeout(() => {
+            this.content.resize();
+          }, 1000);
+        };
       }).catch(err => {
         alert(err);
         return;
@@ -36,7 +84,8 @@ export class VideoPage {
       debug: 3
     });
     this.peer.on('open', () => {
-      let mode = this.navParams.data.rtc === 'headset' ? { mode: 'sfu' } : { mode: 'sfu', stream: this.localStream };
+      //     let mode = this.navParams.data.rtc === 'headset' ? { mode: 'mesh' } : { mode: 'sfu', stream: this.localStream };
+      let mode = this.navParams.data.rtc === 'headset' ? {} : { stream: this.localStream };
       this.peerRoom = this.peer.joinRoom(this.mediaRoom.id, mode);
       this.peerRoom.on('stream', stream => {
         let myVideo = <HTMLVideoElement>document.getElementById('myVideo');
@@ -44,12 +93,22 @@ export class VideoPage {
           //$("#myVideo").css({ "width": "320px", "height": "240px" });
           myVideo.srcObject = stream;
           myVideo.play();
+          myVideo.onloadedmetadata = (e) => {
+            setTimeout(() => {
+              this.content.resize();
+            }, 1000);
+          };
         } else {
           let yourVideo = <HTMLVideoElement>document.getElementById('yourVideo');
           if (!yourVideo.srcObject) {
             //$("#yourVideo").css({ "width": "320px", "height": "240px" });
             yourVideo.srcObject = stream;
             yourVideo.play();
+            yourVideo.onloadedmetadata = (e) => {
+              setTimeout(() => {
+                this.content.resize();
+              }, 1000);
+            };
           }
         }
       });
@@ -74,10 +133,62 @@ export class VideoPage {
     this.peer.on('disconnected', () => {
     });
   }
-  stop() {
-    if (this.peerRoom) {
-      this.peerRoom.close();
-      this.navCtrl.setRoot(HomePage, { room: this.mediaRoom });
+  keyPress() {
+    if (this.typing) {
+      this.session.keyPress();
+      this.typing = false;
     }
+    setTimeout(() => {
+      this.typing = true;
+    }, 2000);
+  }
+  sendMsg() {
+    if (this.user) {
+      if (!this.message.trim()) return;
+      let msg = {
+        user: this.user.displayName,
+        message: this.message,
+        avatar: this.user.photoURL
+      };
+      this.session.sendMsg(msg);
+      this.message = "";
+    }
+  }
+  login() {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'ログイン',
+      buttons: [
+        {
+          text: 'twitter',
+          icon: "logo-twitter",
+          role: 'destructive',
+          handler: () => {
+            this.afAuth.auth.signInWithPopup(new firebase.auth.TwitterAuthProvider());
+          }
+        }, {
+          text: 'facebook',
+          icon: "logo-facebook",
+          role: 'destructive',
+          handler: () => {
+            this.afAuth.auth.signInWithPopup(new firebase.auth.FacebookAuthProvider());
+          }
+        }, {
+          text: 'google',
+          icon: "logo-google",
+          role: 'destructive',
+          handler: () => {
+            this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+          }
+        },
+        {
+          icon: "close",
+          role: 'cancel'
+        }
+      ]
+    });
+    actionSheet.present();
+  }
+  logout() {
+    this.afAuth.auth.signOut();
   }
 }

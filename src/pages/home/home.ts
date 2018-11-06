@@ -27,7 +27,6 @@ export class HomePage {
   ngOnInit() {
     this.session.sessionState.subscribe((session: Session) => {
       if (session.typing) {
-        console.log("ok" + session.typing);
         this.writer = session.typing + "が入力中";
         setTimeout(() => {
           this.writer = "";
