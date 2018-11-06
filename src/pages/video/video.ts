@@ -33,16 +33,13 @@ export class VideoPage {
       if (session.rtcStop) {
         if (this.peerRoom) {
           this.peerRoom.close();
-          //this.navCtrl.setRoot(HomePage, { room: this.mediaRoom });
         }
         this.session.clearRtcStop();
       } else if (session.chat) {
         this.chats.push(session.chat);
         setTimeout(() => {
-          if (this.content.scrollToBottom) {
-            this.content.scrollToBottom();
-          }
-        }, 400)
+          this.content.scrollToBottom();
+        }, 400);
       } else if (session.typing) {
         this.writer = session.typing + "が入力中";
         setTimeout(() => {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ActionSheetController, LoadingController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
 import { HomePage } from '../../pages/home/home';
 import { MysqlProvider } from '../../providers/mysql/mysql';
 import { Session, SessionProvider } from '../../providers/session/session';
@@ -17,10 +17,10 @@ export class PayPage {
   date;
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
-    public mysql: MysqlProvider,
+    private mysql: MysqlProvider,
     private session: SessionProvider,
-    public actionSheetCtrl: ActionSheetController,
-    public loadingCtrl: LoadingController) {
+    private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController) {
     this.room = this.navParams.data.room;
   }
   ngOnInit() {
@@ -37,20 +37,11 @@ export class PayPage {
     Payjp.createToken(card, (s, response) => {
       if (response.error) {
         loader.dismiss();
-        let actionSheet = this.actionSheetCtrl.create({
+        let alert = this.alertCtrl.create({
           title: "クレジットカード情報の取得に失敗しました。",
-          buttons: [
-            {
-              text: response.error.message,
-              icon: "exit",
-              role: 'destructive',
-              handler: () => {
-
-              }
-            }
-          ]
+          buttons: ["OK"]
         });
-        actionSheet.present();
+        alert.present();
       } else {
         let user = this.session.getUser();
         this.mysql.pay(response.id, this.room.price, this.room.id, user).subscribe((data: any) => {
@@ -58,33 +49,26 @@ export class PayPage {
           if (data.msg === "ok") {
             this.room.allow = "1";
             this.session.login(user);
-            let actionSheet = this.actionSheetCtrl.create({
+            let alert = this.alertCtrl.create({
               title: 'ようこそ「' + this.room.na + "」へ",
+              message: '定額課金の処理が正常に行われました。',
               buttons: [
                 {
-                  text: '定額課金の処理が正常に行われました。',
-                  icon: "enter",
-                  role: 'destructive',
+                  role: 'cancel',
                   handler: () => {
                     this.session.joinRoom(this.room);
                   }
                 }
               ]
             });
-            actionSheet.present();
+            alert.present();
           } else {
-            let actionSheet = this.actionSheetCtrl.create({
+            let alert = this.alertCtrl.create({
               title: "定額課金の処理に失敗しました。お問い合わせください。",
-              buttons: [
-                {
-                  text: data.error,
-                  icon: "exit",
-                  handler: () => {
-                  }
-                }
-              ]
+              message: data.error,
+              buttons: ["OK"]
             });
-            actionSheet.present();
+            alert.present();
           }
         });
       }

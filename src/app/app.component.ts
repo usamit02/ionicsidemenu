@@ -62,8 +62,8 @@ export class MyApp {
         if (session.user != this.user) {
           if (session.user) {
             this.user = session.user;
-            let u = { id: this.user.uid, name: this.user.displayName, avatorUrl: this.user.photoURL }
-            this.socket.emit('join', { newRoomId: this.room.id, user: u, rtc: session.rtc });
+            let user = { id: this.user.uid, name: this.user.displayName, avatorUrl: this.user.photoURL }
+            this.socket.emit('join', { newRoomId: this.room.id, user: user, rtc: session.rtc });
           } else {
             this.user = false;
             this.bookmk = false;
@@ -73,7 +73,9 @@ export class MyApp {
         }
       }
     })
-    this.socket.on("join", users => { this.members = users; });
+    this.socket.on("join", users => {
+      this.members = users;
+    });
     this.socket.on("typing", name => {
       this.session.typing(name);
       this.session.clearTyping();
@@ -106,11 +108,12 @@ export class MyApp {
       } else {
         this.nav.setRoot(HomePage, { room: room });
       }
-      this.socket.emit('leave', { oldRoomId: this.room.id });
-      this.room = room;
     } else {
       this.nav.setRoot(StoryPage, { room: room, user: this.user });
     }
+    let user = { id: this.user.uid, name: this.user.displayName, avatorUrl: this.user.photoURL }
+    this.socket.emit('join', { newRoomId: room.id, oldRoomId: this.room.id, user: user });
+    this.room = room;
   }
   retRoom() {
     if (this.session.getRtc()) { this.session.rtcStop(); }

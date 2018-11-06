@@ -75,10 +75,8 @@ export class HomePage {
     });
     this.message = "";
     setTimeout(() => {
-      if (this.content.scrollToBottom) {
-        this.content.scrollToBottom();
-      }
-    }, 400)
+      this.content.scrollToBottom();
+    }, 400);
   }
   login() {
     let actionSheet = this.actionSheetCtrl.create({
