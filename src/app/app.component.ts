@@ -46,7 +46,7 @@ export class MyApp {
   ngOnInit() {
     this.session.sessionState.subscribe((session: Session) => {
       if (session.rtc) {
-        this.nav.setRoot(VideoPage, { room: this.room, rtc: session.rtc, user: session.user });
+        this.nav.setRoot(VideoPage, { room: this.room, rtc: session.rtc, video: session.video, user: session.user });
         this.socket.emit('rtc', session.rtc);
         this.session.clearRtc();
       } else if (session.room) {
@@ -134,7 +134,7 @@ export class MyApp {
   }
   letMember(member) {
     let toast = this.toastCtrl.create({
-      message: member.name + "について表示する予定、ここからDM、ビデオ通話など",
+      message: member.name + "について自己紹介やtwitterリンクを表示する予定、ここからDM、ビデオ通話など",
       duration: 3000,
       position: 'top'
     });
@@ -157,7 +157,7 @@ export class MyApp {
           //this.room.bookmark = this.room.bookmark === "1" ? "0" : "1";
           msg = room.bookmark === "1" ? "のブックマークを外しました。" : "をブックマークしました。";
           msg = "「" + room.na + "」" + msg;
-          this.session.login(this.user);
+          this.readRooms();
         } else {
           msg = data.msg;
         }

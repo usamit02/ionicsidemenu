@@ -38,6 +38,13 @@ export class SessionProvider {
   clearRtcStop(): void {
     this.session.rtcStop = false;
   }
+  getVideo(): boolean {
+    return this.session.video;
+  }
+  setVideo(): boolean {
+    this.session.video = !this.session.video;
+    return this.session.video;
+  }
   joinRoom(room) {
     this.session.room = room;
     this.session.rtc = false;
@@ -83,6 +90,7 @@ export class Session {
   rtc;
   rtcPlay;
   rtcStop;
+  video;
   room;
   msg;
   chat;
@@ -92,6 +100,7 @@ export class Session {
     this.rtc = false;
     this.rtcPlay = false;
     this.rtcStop = false;
+    this.video = true;
     this.typing = "";
     this.keyPress = false;
     this.chat = false;

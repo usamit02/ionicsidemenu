@@ -19,6 +19,7 @@ export class VideoPage {
   chats = [];
   typing: boolean = true;
   writer: string = "";
+  video: boolean;
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     private session: SessionProvider,
@@ -27,6 +28,7 @@ export class VideoPage {
   ) {
     this.mediaRoom = this.navParams.data.room;
     this.user = this.navParams.data.user;
+    this.video = this.navParams.data.video;
   }
   ngOnInit() {
     this.session.sessionState.subscribe((session: Session) => {
@@ -58,16 +60,18 @@ export class VideoPage {
     });
   }
   ionViewDidLoad() {
-    if (this.navParams.data.rtc !== 'headset') {
-      let media = this.navParams.data.rtc == 'mic' ?
+    const cast: boolean = this.navParams.data.rtc === "mic" ? true : false;
+    if (cast) {
+      let media = this.video ?
         { video: { width: { min: 320, max: 480 }, height: { min: 240, max: 320 } }, audio: true } :
         { audio: true, video: false };
       navigator.mediaDevices.getUserMedia(media).then(stream => {
-        let video = <HTMLVideoElement>document.getElementById('myVideo');
-        video.srcObject = stream;
+        let myVideo = <HTMLVideoElement>document.getElementById('myVideo');
+        myVideo.srcObject = stream;
         this.localStream = stream;
-        video.onloadedmetadata = (e) => {
+        myVideo.onloadedmetadata = (e) => {
           setTimeout(() => {
+            myVideo.muted = true;
             this.content.resize();
           }, 1000);
         };
@@ -82,7 +86,7 @@ export class VideoPage {
     });
     this.peer.on('open', () => {
       //     let mode = this.navParams.data.rtc === 'headset' ? { mode: 'mesh' } : { mode: 'sfu', stream: this.localStream };
-      let mode = this.navParams.data.rtc === 'headset' ? {} : { stream: this.localStream };
+      let mode = cast ? { stream: this.localStream } : {};
       this.peerRoom = this.peer.joinRoom(this.mediaRoom.id, mode);
       this.peerRoom.on('stream', stream => {
         let myVideo = <HTMLVideoElement>document.getElementById('myVideo');
@@ -118,8 +122,10 @@ export class VideoPage {
         myVideo.srcObject = undefined;
         let yourVideo = <HTMLVideoElement>document.getElementById('yourVideo');
         yourVideo.srcObject = undefined;
+        this.localStream = undefined;
         //$("video").css({ "width": "0px", "height": "0px" });
         this.peer.disconnect();
+        console.log("peer disconnect!");
       });
     });
     this.peer.on('error', err => {
@@ -187,5 +193,10 @@ export class VideoPage {
   }
   logout() {
     this.afAuth.auth.signOut();
+  }
+  stop() {
+    if (this.peerRoom) {
+      this.peerRoom.close();
+    }
   }
 }

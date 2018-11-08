@@ -13,7 +13,7 @@
     <ion-content>
       <ion-list>
         <ion-item-sliding #itemSliding *ngFor="let room of rooms">
-          <button ion-item menuClose (click)="joinRoom(room)">
+          <button ion-item menuClose (click)="joinRoom(room)" (press)="bookmark(room)">
             <span [class.folder]="room.folder=='1'">{{room.na}}</span>
             <ion-icon *ngIf="room.allow=='0'" name="lock" item-right></ion-icon>
             <ion-icon *ngIf="room.bookmark=='1'" name="bookmark" item-right></ion-icon>

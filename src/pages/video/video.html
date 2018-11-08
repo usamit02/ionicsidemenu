@@ -1,20 +1,32 @@
 <ion-header>
-  <!--
+  <!--   <div [ngSwitch]="video">
+    <div *ngSwitchCase="false">-->
   <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
     <ion-item>
-      <ion-title>{{mediaRoom.na}} メディア</ion-title>
-      <button ion-button icon-only item-right (click)="stop()">
+      <ion-title>{{mediaRoom.na}} ラジオ</ion-title>
+      <button ion-button icon-only item-right color="dark" (click)="stop()">
         <ion-icon name="exit" item-right></ion-icon>
       </button>
     </ion-item>
+    <ion-buttons end>
+      <button ion-button menuToggle="right">
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
--->
+  <!--     <video class="radio" id="myVideo" autoplay muted="true"></video>
+      <video class="radio" id="yourVideo" autoplay></video>
+     </div>
+    <div *ngSwitchDefault>-->
   <video id="myVideo" autoplay muted="true"></video>
   <video id="yourVideo" autoplay></video>
+  <!--    </div>
+  </div>-->
 </ion-header>
 <ion-content>
-  <!--  <div ion-fixed class="videos">    
-  </div> -->
   <ion-list class="chat-list">
     <ion-item *ngFor="let chat of chats">
       <ion-avatar item-left>

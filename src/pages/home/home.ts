@@ -16,6 +16,7 @@ export class HomePage {
   users = [];
   typing: boolean = true;
   writer: string = "";
+  video: boolean = true;
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public afAuth: AngularFireAuth,
@@ -116,6 +117,10 @@ export class HomePage {
     this.afAuth.auth.signOut();
   }
   rtc(action) {
-    this.session.rtc(action);
+    if (action === "video") {
+      this.video = this.session.setVideo();
+    } else {
+      this.session.rtc(action);
+    }
   }
 }

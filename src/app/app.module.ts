@@ -25,8 +25,8 @@ export const firebaseConfig = {
   storageBucket: 'blogersguild1.appspot.com',
   messagingSenderId: '1091781872346'
 };
-const config: SocketIoConfig = { url: 'http://localhost:3002', options: {} };
-//const config: SocketIoConfig = { url: 'https://www.clife.cf:3002', options: {} };
+//const config: SocketIoConfig = { url: 'http://localhost:3002', options: {} };
+const config: SocketIoConfig = { url: 'https://www.clife.cf:3002', options: {} };
 @NgModule({
   declarations: [
     MyApp,
