@@ -5,16 +5,15 @@
     </button>
     <ion-item>
       <ion-title>{{room.na}}</ion-title>
-      <button ion-button icon-only (click)="rtc('video')" color="light" [class.video]="video" item-right>
-        <ion-icon name="desktop"></ion-icon>
-      </button>
       <button ion-button (click)="rtc('headset')" item-right>
         <ion-icon name="headset"></ion-icon>
         視聴
       </button>
       <button *ngIf="user" ion-button (click)="rtc('mic')" color="danger" icon-left item-right>
-        <ion-icon name="mic"></ion-icon>
-        放送
+        <ion-icon name="mic"></ion-icon>ラジオ
+      </button>
+      <button *ngIf="user" ion-button (click)="rtc('videocam')" color="danger" icon-left item-right>
+        <ion-icon name="videocam"></ion-icon>動画
       </button>
       <button *ngIf="user" ion-button icon-only item-right (click)="logout()" item-right icon-left color="dark">
         <ion-icon name="exit"></ion-icon>

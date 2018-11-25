@@ -10,7 +10,7 @@ export class SessionProvider {
   login(user) {
     this.session.login = true;
     this.session.user = user;
-    this.session.rtc = false;
+    this.session.rtc = "";
     this.sessionSubject.next(this.session);
   }
   logout(): void {
@@ -25,7 +25,7 @@ export class SessionProvider {
     this.session.rtcPlay = action;
   }
   clearRtc(): void {
-    this.session.rtc = false;
+    this.session.rtc = "";
   }
   getRtc() {
     return this.session.rtcPlay;
@@ -47,7 +47,7 @@ export class SessionProvider {
   }
   joinRoom(room) {
     this.session.room = room;
-    this.session.rtc = false;
+    this.session.rtc = "";
     this.sessionSubject.next(this.session);
   }
   clearRoom(): void {
@@ -87,7 +87,7 @@ export class Session {
   typing: string;
   keyPress: boolean;
   user;
-  rtc;
+  rtc: string;
   rtcPlay;
   rtcStop;
   video;
@@ -97,7 +97,7 @@ export class Session {
   constructor() {
     this.login = false;
     this.room = false;
-    this.rtc = false;
+    this.rtc = "";
     this.rtcPlay = false;
     this.rtcStop = false;
     this.video = true;
@@ -109,7 +109,7 @@ export class Session {
   reset(): Session {
     this.login = false;
     this.user = false;
-    this.rtc = false;
+    this.rtc = "";
     this.rtcStop = false;
     this.room = false;
     this.typing = "";

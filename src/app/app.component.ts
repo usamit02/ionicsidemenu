@@ -20,8 +20,8 @@ export class MyApp {
   allRooms = [];
   rooms = [];
   members = [];
-  room = { id: "1", na: "メインラウンジ", parent: "0", folder: "0", bookmark: "0" };
-  folder = { id: "0", na: "ブロガーズギルド", parent: "0", folder: "0" };
+  room = { id: 1, na: "メインラウンジ", allow: 1, parent: 0, folder: 0, bookmark: 0 };
+  folder = { id: 0, na: "ブロガーズギルド", parent: 0, folder: 0 };
   user;
   userX: string;
   bookmk: boolean = false;
@@ -44,14 +44,27 @@ export class MyApp {
     this.user = false;
   }
   ngOnInit() {
+    this.socket.on("join", users => {
+      console.log(users[0].name + "_" + users[0].rtc);
+      this.members = users;
+    });
+    this.socket.on("typing", name => {
+      this.session.typing(name);
+      this.session.clearTyping();
+    });
+    this.socket.on("chat", chat => {
+      this.session.chat(chat);
+      this.session.clearChat();
+    });
+    this.readRooms();
     this.session.sessionState.subscribe((session: Session) => {
-      if (session.rtc) {
+      if (session.room) {
+        this.joinRoom(session.room);
+        this.session.clearRoom();
+      } else if (session.rtc) {
         this.nav.setRoot(VideoPage, { room: this.room, rtc: session.rtc, video: session.video, user: session.user });
         this.socket.emit('rtc', session.rtc);
         this.session.clearRtc();
-      } else if (session.room) {
-        this.joinRoom(session.room);
-        this.session.clearRoom();
       } else if (session.keyPress) {
         this.socket.emit('typing', this.user.displayName);
         this.session.clearKey();
@@ -72,38 +85,28 @@ export class MyApp {
           this.readRooms();
         }
       }
-    })
-    this.socket.on("join", users => {
-      this.members = users;
     });
-    this.socket.on("typing", name => {
-      this.session.typing(name);
-      this.session.clearTyping();
-    });
-    this.socket.on("chat", chat => {
-      this.session.chat(chat);
-      this.session.clearChat();
-    });
-    this.readRooms();
   }
   readRooms() {
     this.mysql.room(this.user ? this.user.uid : "0").subscribe((data: any) => {
       this.allRooms = data;
+      var rooms = [];
       if (this.bookmk) {
-        this.rooms = data.filter(r => { if (r.bookmark === "1") return true; });
+        rooms = data.filter(r => { if (r.bookmark === 1) return true; });
       } else {
-        this.rooms = data.filter(r => { if (r.parent === this.folder.id) return true; });
+        rooms = data.filter(r => { if (r.parent === this.folder.id) return true; });
       }
+      this.rooms = rooms;
     });
   }
   joinRoom(room) {
-    if (this.session.getRtc()) { this.session.rtcStop(); }
-    if (room.allow === "1") {
-      if (room.folder === "1") {
+    //if (this.session.getRtc()) { this.session.rtcStop(); }
+    if (room.allow === 1) {
+      if (room.folder === 1) {
         this.rooms = this.allRooms.filter(r => { if (r.parent === room.id) return true; });
         this.folder = room;
         this.nav.setRoot(GridPage, { folder: room, rooms: this.rooms });
-      } else if (room.folder === "2") {
+      } else if (room.folder === 2) {
         this.nav.setRoot(StoryPage, { room: room });
       } else {
         this.nav.setRoot(HomePage, { room: room });
@@ -112,12 +115,12 @@ export class MyApp {
       this.nav.setRoot(StoryPage, { room: room, user: this.user });
     }
     let user = { id: this.user.uid, name: this.user.displayName, avatorUrl: this.user.photoURL }
-    this.socket.emit('join', { newRoomId: room.id, oldRoomId: this.room.id, user: user });
+    this.socket.emit('join', { newRoomId: room.id, oldRoomId: this.room.id, user: user, rtc: "" });
     this.room = room;
   }
   retRoom() {
-    if (this.session.getRtc()) { this.session.rtcStop(); }
-    if (this.folder.id === "0") {
+    //if (this.session.getRtc()) { this.session.rtcStop(); }
+    if (this.folder.id === 0) {
       if (this.user) {
         this.bookmk = !this.bookmk;
         this.readRooms();

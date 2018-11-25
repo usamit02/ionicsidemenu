@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { ColdObservable } from 'rxjs/testing/ColdObservable';
 @Injectable()
 export class MysqlProvider {
   url: string = "bloggersguild.cf";
   //url: string = "localhost/public_html";
-  constructor(public http: HttpClient) {
+  constructor(private http: HttpClient) {
   }
   room(uid: string): Observable<Object> {
     return this.http.get("https://" + this.url + "/room.php", { params: { uid: uid } });

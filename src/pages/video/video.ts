@@ -33,9 +33,9 @@ export class VideoPage {
   ngOnInit() {
     this.session.sessionState.subscribe((session: Session) => {
       if (session.rtcStop) {
-        if (this.peerRoom) {
-          this.peerRoom.close();
-        }
+        // if (this.peerRoom) {
+        //   this.peerRoom.close();
+        // }
         this.session.clearRtcStop();
       } else if (session.chat) {
         this.chats.push(session.chat);
@@ -60,12 +60,13 @@ export class VideoPage {
     });
   }
   ionViewDidLoad() {
-    const cast: boolean = this.navParams.data.rtc === "mic" ? true : false;
-    if (cast) {
-      let media = this.video ?
-        { video: { width: { min: 320, max: 480 }, height: { min: 240, max: 320 } }, audio: true } :
-        { audio: true, video: false };
-      navigator.mediaDevices.getUserMedia(media).then(stream => {
+    const rtc: string = this.navParams.data.rtc;
+    let myVideoPeerId: string;
+    let yourVideoPeerId: string;
+    let audioPeerId: string;
+    let media = { video: { width: { min: 240, max: 320 }, height: { min: 180, max: 240 } }, audio: true };
+    navigator.mediaDevices.getUserMedia(media).then(stream => {
+      if (rtc === "videocam") {
         let myVideo = <HTMLVideoElement>document.getElementById('myVideo');
         myVideo.srcObject = stream;
         this.localStream = stream;
@@ -75,57 +76,86 @@ export class VideoPage {
             this.content.resize();
           }, 1000);
         };
-      }).catch(err => {
-        alert(err);
-        return;
-      });
-    }
-    this.peer = new Peer({
+      } else {
+        let tempVideoTrack = stream.getVideoTracks()[0];
+        let tempAudioTrack = stream.getAudioTracks()[0];
+        tempVideoTrack.enabled = false;
+        tempAudioTrack.enabled = rtc === "mic" ? true : false;
+        let mutedStream = new MediaStream();
+        mutedStream.addTrack(tempVideoTrack);
+        mutedStream.addTrack(tempAudioTrack);
+        this.localStream = mutedStream;
+      }
+    }).catch(err => {
+      alert(err);
+      return;
+    });
+    this.peer = new Peer(rtc + "_" + this.user.uid, {
       key: '11d26de3-711f-4a5f-aa60-30142aeb70d9',
       debug: 3
     });
     this.peer.on('open', () => {
-      //     let mode = this.navParams.data.rtc === 'headset' ? { mode: 'mesh' } : { mode: 'sfu', stream: this.localStream };
-      let mode = cast ? { stream: this.localStream } : {};
-      this.peerRoom = this.peer.joinRoom(this.mediaRoom.id, mode);
+      this.peerRoom = this.peer.joinRoom(this.mediaRoom.id, { stream: this.localStream });
       this.peerRoom.on('stream', stream => {
-        let myVideo = <HTMLVideoElement>document.getElementById('myVideo');
-        if (!myVideo.srcObject) {
-          //$("#myVideo").css({ "width": "320px", "height": "240px" });
-          myVideo.srcObject = stream;
-          myVideo.play();
-          myVideo.onloadedmetadata = (e) => {
-            setTimeout(() => {
-              this.content.resize();
-            }, 1000);
-          };
-        } else {
-          let yourVideo = <HTMLVideoElement>document.getElementById('yourVideo');
-          if (!yourVideo.srcObject) {
-            //$("#yourVideo").css({ "width": "320px", "height": "240px" });
-            yourVideo.srcObject = stream;
-            yourVideo.play();
-            yourVideo.onloadedmetadata = (e) => {
-              setTimeout(() => {
-                this.content.resize();
-              }, 1000);
-            };
+        let pid = stream.peerId.split("_");
+        if (pid[1] !== this.user.uid) {
+          if (pid[0] === "mic") {
+            let audio = <HTMLAudioElement>document.getElementById('audio');
+            audio.srcObject = stream;
+            audioPeerId = stream.peerId;
+            audio.play();
+          } else if (pid[0] === "videocam") {
+            let myVideo = <HTMLVideoElement>document.getElementById('myVideo');
+            if (!myVideo.srcObject) {
+              myVideo.srcObject = stream;
+              myVideoPeerId = stream.peerId;
+              myVideo.onloadedmetadata = (e) => {
+                setTimeout(() => {
+                  myVideo.play();
+                  this.content.resize();
+                }, 1000);
+              };
+            } else {
+              let yourVideo = <HTMLVideoElement>document.getElementById('yourVideo');
+              if (!yourVideo.srcObject) {
+                yourVideo.srcObject = stream;
+                yourVideoPeerId = stream.peerId;
+                yourVideo.onloadedmetadata = (e) => {
+                  setTimeout(() => {
+                    yourVideo.play();
+                    this.content.resize();
+                  }, 1000);
+                };
+              }
+            }
           }
         }
       });
-      this.peerRoom.on('peerLeave', peerid => {
+      this.peerRoom.on('peerLeave', peerId => {
+        let myVideo = <HTMLVideoElement>document.getElementById('myVideo');
+        if (myVideo.srcObject && myVideoPeerId == peerId) {
+          myVideo.srcObject = undefined; myVideoPeerId = "";
+        }
+        let yourVideo = <HTMLVideoElement>document.getElementById('yourVideo');
+        if (yourVideo.srcObject && yourVideoPeerId == peerId) {
+          yourVideo.srcObject = undefined; yourVideoPeerId = "";
+        }
+        let audio = <HTMLAudioElement>document.getElementById('audio');
+        if (audio.srcObject && audioPeerId == peerId) {
+          audio.srcObject = undefined; audioPeerId = "";
+        }
       });
       this.peerRoom.on('removeStream', stream => {
       });
       this.peerRoom.on('close', () => {
         let myVideo = <HTMLVideoElement>document.getElementById('myVideo');
-        myVideo.srcObject = undefined;
+        myVideo.srcObject = undefined; myVideoPeerId = "";
         let yourVideo = <HTMLVideoElement>document.getElementById('yourVideo');
-        yourVideo.srcObject = undefined;
+        yourVideo.srcObject = undefined; yourVideoPeerId = "";
+        let audio = <HTMLAudioElement>document.getElementById('audio');
+        audio.srcObject = undefined; audioPeerId = "";
         this.localStream = undefined;
-        //$("video").css({ "width": "0px", "height": "0px" });
         this.peer.disconnect();
-        console.log("peer disconnect!");
       });
     });
     this.peer.on('error', err => {
@@ -134,6 +164,7 @@ export class VideoPage {
     this.peer.on('close', () => {
     });
     this.peer.on('disconnected', () => {
+      this.session.joinRoom(this.mediaRoom);
     });
   }
   keyPress() {
@@ -198,5 +229,6 @@ export class VideoPage {
     if (this.peerRoom) {
       this.peerRoom.close();
     }
+
   }
 }
