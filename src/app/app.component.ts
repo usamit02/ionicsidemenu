@@ -7,7 +7,7 @@ import { HomePage } from '../pages/home/home';
 import { VideoPage } from '../pages/video/video';
 import { GridPage } from '../pages/grid/grid';
 import { StoryPage } from '../pages/story/story';
-import { firebaseConfig } from './app.module';
+import { firebaseConfig } from '../environment';
 import { Socket } from 'ng-socket-io';
 import { Session, SessionProvider } from '../providers/session/session';
 import { MysqlProvider } from '../providers/mysql/mysql';
@@ -90,13 +90,11 @@ export class MyApp {
   readRooms() {
     this.mysql.room(this.user ? this.user.uid : "0").subscribe((data: any) => {
       this.allRooms = data;
-      var rooms = [];
       if (this.bookmk) {
-        rooms = data.filter(r => { if (r.bookmark === 1) return true; });
+        this.rooms = data.filter(r => { if (r.bookmark === 1) return true; });
       } else {
-        rooms = data.filter(r => { if (r.parent === this.folder.id) return true; });
+        this.rooms = data.filter(r => { if (r.parent === this.folder.id) return true; });
       }
-      this.rooms = rooms;
     });
   }
   joinRoom(room) {

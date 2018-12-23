@@ -15,6 +15,7 @@ export class PayPage {
   months = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
   card = { number: "4242424242424242", cvc: "123", exp_year: "2020", exp_month: "12" };
   date;
+  price;
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     private mysql: MysqlProvider,
@@ -27,6 +28,11 @@ export class PayPage {
     Payjp.setPublicKey("pk_test_12e1f56f9f92414d7b00af63");
     const toDay = new Date;
     this.date = toDay.getDate();
+    this.mysql.query("room.php", { plan: this.room.plan }).subscribe((data: any) => {
+      if (!data.error) {
+        this.price = data[0].amount;
+      }
+    });
   }
 
   pay(card) {
@@ -44,7 +50,7 @@ export class PayPage {
         alert.present();
       } else {
         let user = this.session.getUser();
-        this.mysql.pay(response.id, this.room.price, this.room.id, user).subscribe((data: any) => {
+        this.mysql.query("pay/charge.php", { token: response.id, room: this.room.id, uid: user.uid, na: user.displayName }).subscribe((data: any) => {
           loader.dismiss();
           if (data.msg === "ok") {
             this.room.allow = "1";

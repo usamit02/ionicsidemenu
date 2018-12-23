@@ -23,7 +23,7 @@ export class HomePage {
     private session: SessionProvider,
     public actionSheetCtrl: ActionSheetController
   ) {
-    this.room = 'room' in this.navParams.data ? this.navParams.data.room : { id: "1", na: "メインラウンジ", folder: "0", allow: "1", parent: "0", bookmark: "0", price: "0" };
+    this.room = 'room' in this.navParams.data ? this.navParams.data.room : { id: "1", na: "メインラウンジ", folder: "0", allow: "1", parent: "0", bookmark: "0", plan: "0" };
   }
   ngOnInit() {
     this.session.sessionState.subscribe((session: Session) => {
