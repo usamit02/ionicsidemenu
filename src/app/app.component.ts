@@ -6,7 +6,6 @@ import * as firebase from 'firebase';
 import { HomePage } from '../pages/home/home';
 import { VideoPage } from '../pages/video/video';
 import { GridPage } from '../pages/grid/grid';
-import { StoryPage } from '../pages/story/story';
 import { firebaseConfig } from '../environment';
 import { Socket } from 'ng-socket-io';
 import { Session, SessionProvider } from '../providers/session/session';
@@ -88,7 +87,8 @@ export class MyApp {
     });
   }
   readRooms() {
-    this.mysql.room(this.user ? this.user.uid : "0").subscribe((data: any) => {
+    let uid = this.user ? this.user.uid : "0";
+    this.mysql.query("room.php", { uid: uid }).subscribe((data: any) => {
       this.allRooms = data;
       if (this.bookmk) {
         this.rooms = data.filter(r => { if (r.bookmark === 1) return true; });
@@ -100,17 +100,15 @@ export class MyApp {
   joinRoom(room) {
     //if (this.session.getRtc()) { this.session.rtcStop(); }
     if (room.allow === 1) {
-      if (room.folder === 1) {
+      if (room.folder) {
         this.rooms = this.allRooms.filter(r => { if (r.parent === room.id) return true; });
         this.folder = room;
         this.nav.setRoot(GridPage, { folder: room, rooms: this.rooms });
-      } else if (room.folder === 2) {
-        this.nav.setRoot(StoryPage, { room: room });
       } else {
         this.nav.setRoot(HomePage, { room: room });
       }
     } else {
-      this.nav.setRoot(StoryPage, { room: room, user: this.user });
+      this.nav.setRoot(HomePage, { room: room, user: this.user });
     }
     let user = { id: this.user.uid, name: this.user.displayName, avatorUrl: this.user.photoURL }
     this.socket.emit('join', { newRoomId: room.id, oldRoomId: this.room.id, user: user, rtc: "" });

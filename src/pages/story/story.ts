@@ -1,45 +1,34 @@
-import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, ActionSheetController } from 'ionic-angular';
+import { Component, Input } from '@angular/core';
+import { IonicPage, NavController, ActionSheetController } from 'ionic-angular';
 import { MysqlProvider } from '../../providers/mysql/mysql';
 import { PayPage } from '../../pages/pay/pay';
 import * as firebase from 'firebase';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { SessionProvider } from '../../providers/session/session';
+declare var twttr;
 @IonicPage()
 @Component({
-  selector: 'page-story',
+  selector: 'story',
   templateUrl: 'story.html',
 })
 export class StoryPage {
   storys = [];
   story: string;
-  room;
-  user;
+  @Input() room;
+  @Input() user;
   constructor(public navCtrl: NavController,
-    public navParams: NavParams,
     public mysql: MysqlProvider,
     public actionSheetCtrl: ActionSheetController,
     private session: SessionProvider,
     public afAuth: AngularFireAuth
   ) {
-    this.room = this.navParams.data.room;
-    this.user = this.navParams.data.user;
   }
   ngOnInit() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.user = user;
-        this.session.login(this.user);
-      } else {
-        this.user = false;
-        this.session.logout();
-      }
-    });
-  }
-
-  ionViewDidLoad() {
-    this.mysql.story(this.room.id).subscribe((data: any) => {
-      document.getElementById("main").innerHTML = data;
+    this.mysql.query("story.php", { uid: this.user.uid, rid: this.room.id }).subscribe((res: any) => {
+      this.storys = res.main;
+      setTimeout(() => {
+        twttr.widgets.load();
+      });
     });
   }
   pay() {

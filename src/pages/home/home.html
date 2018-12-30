@@ -28,7 +28,8 @@
 </ion-header>
 
 <ion-content>
-  <ion-list class="chat-list">
+  <story *ngIf="room.contents" [room]="room" [user]="user"></story>
+  <ion-list *ngIf="room.chat" class="chat-list">
     <ion-item *ngFor="let chat of chats">
       <ion-avatar item-left>
         <img [src]="chat.avatar">
@@ -41,7 +42,7 @@
 </ion-content>
 
 <ion-footer>
-  <ion-toolbar no-padding>
+  <ion-toolbar *ngIf="room.chat" no-padding>
     <div [ngSwitch]="user">
       <div *ngSwitchCase="false">
         <button ion-item (click)="login()">

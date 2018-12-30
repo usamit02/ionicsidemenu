@@ -15,11 +15,6 @@ export class GridPage {
     this.rooms = this.navParams.data.rooms;
   }
 
-  ionViewDidLoad() {
-    this.mysql.story(this.folder.id).subscribe((data: any) => {
-      document.getElementById("main").innerHTML = data;
-    });
-  }
   joinRoom(room) {
     this.session.joinRoom(room);
   }

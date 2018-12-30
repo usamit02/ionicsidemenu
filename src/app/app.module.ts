@@ -18,6 +18,7 @@ import { SocketIoModule } from 'ng-socket-io';
 import { SessionProvider } from '../providers/session/session';
 import { MysqlProvider } from '../providers/mysql/mysql';
 import { firebaseConfig, config } from '../environment';
+import { SafePipe } from '../pipe/safe';
 @NgModule({
   declarations: [
     MyApp,
@@ -25,7 +26,8 @@ import { firebaseConfig, config } from '../environment';
     VideoPage,
     GridPage,
     PayPage,
-    StoryPage
+    StoryPage,
+    SafePipe
   ],
   imports: [
     BrowserModule,
