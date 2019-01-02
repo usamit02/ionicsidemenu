@@ -25,7 +25,7 @@ export class HomePage {
   ) {
     this.room = 'room' in this.navParams.data ? this.navParams.data.room : {
       id: "1", na: "メインラウンジ",
-      folder: "0", allow: "1", parent: "0", bookmark: "0", plan: "0", chat: "1", contents: "0"
+      folder: "0", allow: "1", parent: "0", bookmark: "0", plan: "0", chat: "1", story: "0"
     };
   }
   ngOnInit() {
