@@ -19,8 +19,8 @@ export class MyApp {
   allRooms = [];
   rooms = [];
   members = [];
-  room = { id: 1, na: "メインラウンジ", allow: 1, parent: 0, folder: 0, bookmark: 0 };
-  folder = { id: 0, na: "ブロガーズギルド", parent: 0, folder: 0 };
+  room = { id: 2, na: "メインラウンジ", allow: 1, parent: 1, folder: 0, bookmark: 0 };
+  folder = { id: 1, na: "ブロガーズギルド", parent: 1, folder: 0 };
   user;
   userX: string;
   bookmk: boolean = false;
