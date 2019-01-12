@@ -1,12 +1,13 @@
-<div class="row" *ngFor="let story of storys">
-  <div class="txt" [innerHtml]="story.txt | safe: 'html'"></div>
-  <div class="media" [innerHtml]="story.media | safe: 'html'"></div>
-  <div *ngIf="story.pay>0" style="width:100%;" text-center align-items-center>
-    <button ion-button round large (click)="pay()">
-      {{story.pay}}円で続きを見る
-    </button></div>
-</div>
-
+<ng-container *ngFor="let story of storys">
+  <div class="row">
+    <div class="txt" [innerHtml]="story.txt | safe: 'html'"></div>
+    <div class="media" [innerHtml]="story.media | safe: 'html'"></div>
+    <div *ngIf="story.pay>0" style="width:100%;" text-center align-items-center>
+      <button ion-button round large (click)="pay()">
+        {{story.pay}}円で続きを見る
+      </button></div>
+  </div>
+</ng-container>
 <div *ngIf="room.allow=='0'" style="width:100%;" text-center align-items-center>
   <p></p>
   <button ion-button round large (click)="pay()">

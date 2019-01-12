@@ -5,8 +5,8 @@ import { catchError } from 'rxjs/operators';
 import { ColdObservable } from 'rxjs/testing/ColdObservable';
 @Injectable()
 export class MysqlProvider {
-  url: string = "https://bloggersguild.cf/";
-  //url: string = "http://localhost/public_html/";
+  //url: string = "https://bloggersguild.cf/";
+  url: string = "http://localhost/public_html/";
   constructor(private http: HttpClient) {
   }
   query(url: string, params: any): Observable<Object> {
